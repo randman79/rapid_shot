@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Rapid Response Pro | Trash Panda Pros</title>
+    <style>
+        :root { 
+            --bg-black: #000000;
+            --card-gray: #1a1a1a;
+            --input-bg: #2d2d2d;
+            --accent-orange: #d9933f;
+            --text-main: #ffffff;
+            --text-dim: #999999;
+            --border: #333333;
+            --hit-green: #4a5441;
+            --miss-red: #544141;
+        }
+
+        body { 
+            font-family: -apple-system, system-ui, sans-serif; 
+            background: var(--bg-black); 
+            color: var(--text-main); 
+            text-align: center; 
+            padding: 20px; 
+            margin: 0; 
+            overscroll-behavior: none;
+        }
+
+        .container { 
+            max-width: 420px; 
+            margin: auto; 
+            background: var(--bg-black);
+            padding: 10px;
+        }
+        
+        header { 
+            margin-bottom: 25px; 
+            text-align: left; 
+            border-bottom: 1px solid var(--border); 
+            padding-bottom: 15px; 
+        }
+        
+        h1 { font-size: 1.3rem; margin: 0; color: var(--accent-orange); text-transform: uppercase; letter-spacing: 1px; }
+        h1 span { color: var(--text-main); }
+        .tool-sub { font-size: 0.65rem; color: var(--text-dim); margin-top: 4px; letter-spacing: 1px; font-weight: bold; }
+
+        .main-layout { 
+            display: grid; 
+            grid-template-columns: 1.2fr 1fr; 
+            gap: 12px; 
+            text-align: left; 
+        }
+
+        .input-group { margin-bottom: 12px; }
+        .input-group label { display: block; font-size: 0.6rem; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase; font-weight: 800; }
+        
+        input[type="text"], select { 
+            width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border); 
+            background: var(--input-bg); color: var(--text-main); box-sizing: border-box; font-size: 0.9rem; 
+            -webkit-appearance: none;
+        }
+
+        .stat-card { 
+            background: var(--card-gray); 
+            padding: 12px; 
+            border-radius: 10px; 
+            border: 1px solid var(--border); 
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .stat-val { font-size: 1.6rem; font-weight: 800; color: var(--text-main); display: block; }
+        .stat-label { font-size: 0.55rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .status-box { 
+            background: var(--input-bg); border: 1px solid var(--border); 
+            padding: 12px; border-radius: 8px; text-align: center; 
+            color: var(--accent-orange); font-weight: 900; margin-bottom: 10px; 
+            font-size: 0.9rem; letter-spacing: 1px;
+        }
+
+        button { 
+            width: 100%; padding: 16px; border-radius: 30px; border: none; 
+            font-size: 1rem; cursor: pointer; font-weight: 800; text-transform: uppercase;
+            transition: transform 0.1s, background 0.2s; margin-bottom: 10px;
+        }
+        button:active { transform: scale(0.96); }
+        
+        .btn-start { background: var(--accent-orange); color: var(--bg-black); }
+        .btn-stop { background: #333; color: #fff; border: 1px solid #444; }
+
+        .feedback-area { 
+            display: none; grid-template-columns: 1fr 1fr; gap: 10px; 
+            margin-top: 15px; background: var(--card-gray); padding: 15px; border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        .btn-hit { background: var(--hit-green); color: white; margin: 0; border: 1px solid #5a6650; }
+        .btn-miss { background: var(--miss-red); color: white; margin: 0; border: 1px solid #665050; }
+
+        .footer-nav { margin-top: 20px; display: flex; justify-content: space-between; gap: 8px; }
+        .btn-tiny { background: var(--input-bg); color: var(--text-dim); font-size: 0.6rem; padding: 10px; border-radius: 8px; width: auto; flex: 1; margin: 0; font-weight: normal; }
+
+        .branding-footer { margin-top: 35px; font-size: 0.65rem; color: var(--text-dim); border-top: 1px solid var(--border); padding-top: 15px; letter-spacing: 1px; }
+        .branding-footer span { color: var(--accent-orange); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>RAPID RESPONSE PRO — <span>DRY FIRE</span></h1>
+        <div class="tool-sub">PERFORMANCE ANALYST // TRASH PANDA PROS</div>
+    </header>
+
+    <div class="main-layout">
+        <div class="controls-side">
+            <div class="input-group">
+                <label>Callsign</label>
+                <input type="text" id="user-name" placeholder="OPERATOR ID" oninput="saveSettings()">
+            </div>
+            <div class="input-group">
+                <label>Platform</label>
+                <select id="weapon-type" onchange="saveSettings()">
+                    <option value="Handgun">Handgun</option>
+                    <option value="Rifle">Rifle</option>
+                    <option value="Shotgun">Shotgun</option>
+                    <option value="PCC">PCC</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Reps</label>
+                <select id="beep-limit">
+                    <option value="1">1 Single Rep</option>
+                    <option value="5">5 Reps</option>
+                    <option value="10">10 Reps</option>
+                    <option value="9999">Continuous</option>
+                </select>
+            </div>
+            <div id="status" class="status-box">STANDBY</div>
+            <button id="main-btn" class="btn-start" onclick="toggleSession()">START DRILL</button>
+        </div>
+
+        <div class="stats-side">
+            <div class="stat-card">
+                <span class="stat-label">Session Acc</span>
+                <span class="stat-val" id="session-rate">0%</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Overall Acc</span>
+                <span class="stat-val" id="overall-rate">0%</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Total Reps</span>
+                <span class="stat-val" id="total-reps">0</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="feedback-area" class="feedback-area">
+        <button class="btn-hit" onclick="handleResult(true)">HIT</button>
+        <button class="btn-miss" onclick="handleResult(false)">MISS</button>
+    </div>
+
+    <div class="footer-nav">
+        <button class="btn-tiny" onclick="exportCSV()">EXPORT LOGS</button>
+        <button class="btn-tiny" onclick="resetOverall()">WIPE DATA</button>
+    </div>
+
+    <div class="branding-footer">
+        Developed by <span>Trash Panda Pros</span>
+    </div>
+</div>
+
+<script>
+    const TOOL_NAME = "Rapid Response Pro";
+    let sessionHits = 0, sessionTotal = 0, isRunning = false, beepsCompleted = 0, timerId = null;
+    let overallHits, overallTotal;
+
+    function loadSettings() {
+        overallHits = parseInt(localStorage.getItem('overallHits')) || 0;
+        overallTotal = parseInt(localStorage.getItem('overallTotal')) || 0;
+        document.getElementById('user-name').value = localStorage.getItem('userName') || "";
+        document.getElementById('weapon-type').value = localStorage.getItem('weaponType') || "Handgun";
+        updateDisplay();
+    }
+
+    function saveSettings() {
+        localStorage.setItem('userName', document.getElementById('user-name').value);
+        localStorage.setItem('weaponType', document.getElementById('weapon-type').value);
+    }
+
+    let audioCtx;
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+
+    /* THE SCREAMER ENGINE: Triple-Oscillator for max sharpness/volume */
+    function playBeep() {
+        if (!audioCtx) return;
+        
+        const masterGain = audioCtx.createGain();
+        masterGain.connect(audioCtx.destination);
+        
+        // High gain to ensure max volume output
+        masterGain.gain.setValueAtTime(1.0, audioCtx.currentTime);
+        masterGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+
+        // 1. Square wave: Harsh, sharp edges (Max loudness)
+        const osc1 = audioCtx.createOscillator();
+        osc1.type = 'square';
+        osc1.frequency.setValueAtTime(900, audioCtx.currentTime);
+        osc1.connect(masterGain);
+
+        // 2. Sawtooth wave: Harmonic buzz (Cuts through background noise)
+        const osc2 = audioCtx.createOscillator();
+        osc2.type = 'sawtooth';
+        osc2.frequency.setValueAtTime(1100, audioCtx.currentTime);
+        osc2.connect(masterGain);
+
+        // 3. High Sine: Piercing tone (Targets high-frequency attention)
+        const osc3 = audioCtx.createOscillator();
+        osc3.type = 'sine';
+        osc3.frequency.setValueAtTime(2200, audioCtx.currentTime);
+        osc3.connect(masterGain);
+
+        osc1.start(); osc2.start(); osc3.start();
+        osc1.stop(audioCtx.currentTime + 0.4);
+        osc2.stop(audioCtx.currentTime + 0.4);
+        osc3.stop(audioCtx.currentTime + 0.4);
+    }
+
+    function updateDisplay() {
+        const sRate = sessionTotal === 0 ? 0 : Math.round((sessionHits / sessionTotal) * 100);
+        const oRate = overallTotal === 0 ? 0 : Math.round((overallHits / overallTotal) * 100);
+        document.getElementById('session-rate').innerText = sRate + "%";
+        document.getElementById('overall-rate').innerText = oRate + "%";
+        document.getElementById('total-reps').innerText = overallTotal;
+    }
+
+    function toggleSession() {
+        initAudio();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        
+        if (!isRunning) {
+            isRunning = true; beepsCompleted = 0; sessionHits = 0; sessionTotal = 0;
+            document.getElementById('main-btn').innerText = "ABORT";
+            document.getElementById('main-btn').className = "btn-stop";
+            updateDisplay(); 
+            playBeep(); // Immediate test beep for user volume check
+            scheduleNextBeep();
+        } else { stopSession(); }
+    }
+
+    function stopSession() {
+        isRunning = false; clearTimeout(timerId);
+        document.getElementById('status').innerText = "STANDBY";
+        document.getElementById('main-btn').innerText = "START DRILL";
+        document.getElementById('main-btn').className = "btn-start";
+        document.getElementById('feedback-area').style.display = "none";
+    }
+
+    function scheduleNextBeep() {
+        const limit = parseInt(document.getElementById('beep-limit').value);
+        if (beepsCompleted >= limit) { stopSession(); return; }
+        document.getElementById('feedback-area').style.display = "none";
+        document.getElementById('status').innerText = "SCANNING...";
+        
+        // Random 3-10 seconds
+        const waitTime = (3 + Math.floor(Math.random() * 8)) * 1000;
+        timerId = setTimeout(() => {
+            playBeep();
+            document.getElementById('status').innerText = "ENGAGE!";
+            document.getElementById('feedback-area').style.display = "grid";
+        }, waitTime);
+    }
+
+    function handleResult(isHit) {
+        sessionTotal++; overallTotal++;
+        if (isHit) { sessionHits++; overallHits++; }
+        localStorage.setItem('overallHits', overallHits);
+        localStorage.setItem('overallTotal', overallTotal);
+        beepsCompleted++; updateDisplay(); scheduleNextBeep();
+    }
+
+    function resetOverall() {
+        if (confirm("Permanently wipe all training data?")) {
+            localStorage.removeItem('overallHits');
+            localStorage.removeItem('overallTotal');
+            loadSettings();
+        }
+    }
+
+    function exportCSV() {
+        const user = document.getElementById('user-name').value || "Operator";
+        const platform = document.getElementById('weapon-type').value;
+        const timestamp = new Date().toLocaleDateString();
+        const hitRate = overallTotal === 0 ? 0 : (overallHits / overallTotal * 100).toFixed(1);
+        const csvContent = "data:text/csv;charset=utf-8," 
+            + `Application,${TOOL_NAME}\nOperator,${user}\nPlatform,${platform}\nDate,${timestamp}\nReps,${overallTotal}\nHits,${overallHits}\nRate,${hitRate}%\n`;
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `${user}_TandP_Stats.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    loadSettings();
+</script>
+</body>
+</html>
